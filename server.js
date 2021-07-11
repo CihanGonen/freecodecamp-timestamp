@@ -28,17 +28,11 @@ app.get("/api/hello", function (req, res) {
 app.get('/api/:date?',(req,res)=>{
     if(req.params.date){
       let input = req.params.date;
-      console.log(input,typeof(input));
-      if(input.includes('-')){
-        let fixedInput = input.split('-').map(elem=> elem.length<2 ? '0'+elem : elem).join('-');
+      let fixedInput = input.split('-').map(elem=> elem.length<2 ? '0'+elem : elem).join('-');
+      if(!isNaN(Number((+new Date(fixedInput)).toFixed(0)))){
         let unix = Number((+new Date(fixedInput)).toFixed(0))
-        if(isNaN(unix)){
-          res.json({ error : "Invalid Date" })
-        }
-        else{
-          let date = (new Date(unix)).toUTCString();
-          res.json({'unix':unix,'utc':date});
-        }
+        let date = (new Date(unix)).toUTCString();
+        res.json({'unix':unix,'utc':date});
       }
       else{
         let numInput = Number(input);
