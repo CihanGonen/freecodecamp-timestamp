@@ -15,6 +15,7 @@ app.use(express.static('public'));
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", function (req, res) {
+  console.log(Date.now())
   res.sendFile(__dirname + '/views/index.html');
 });
 
@@ -23,6 +24,37 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+
+app.get('/api/:date?',(req,res)=>{
+    if(req.params.date){
+      let input = req.params.date;
+      console.log(input,typeof(input));
+      if(input.includes('-')){
+        let fixedInput = input.split('-').map(elem=> elem.length<2 ? '0'+elem : elem).join('-');
+        let unix = Number((+new Date(fixedInput)).toFixed(0))
+        if((new Date(unix)).toUTCString()){
+          res.json({ error : "Invalid Date" })
+        }
+        let date = (new Date(unix)).toUTCString();
+        res.json({'unix':unix,'utc':date});
+      }
+      else{
+        let numInput = Number(input);
+        if(!isNaN(numInput)){
+          let date = (new Date(numInput)).toUTCString();
+          res.json({'unix':numInput,'utc':date});
+        }
+        else{
+          res.json({ error : "Invalid Date" })
+        }
+      }
+    }
+    else{
+      let unix = Date.now();
+      let date = (new Date(unix)).toUTCString();
+      res.json({'unix':unix,'utc':date});
+    }
+})
 
 
 
