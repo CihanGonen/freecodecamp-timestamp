@@ -32,11 +32,13 @@ app.get('/api/:date?',(req,res)=>{
       if(input.includes('-')){
         let fixedInput = input.split('-').map(elem=> elem.length<2 ? '0'+elem : elem).join('-');
         let unix = Number((+new Date(fixedInput)).toFixed(0))
-        if((new Date(unix)).toUTCString()){
+        if(isNaN(unix)){
           res.json({ error : "Invalid Date" })
         }
-        let date = (new Date(unix)).toUTCString();
-        res.json({'unix':unix,'utc':date});
+        else{
+          let date = (new Date(unix)).toUTCString();
+          res.json({'unix':unix,'utc':date});
+        }
       }
       else{
         let numInput = Number(input);
